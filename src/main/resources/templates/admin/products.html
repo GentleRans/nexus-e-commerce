@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Admin — Products')}"></head>
+<body>
+<nav th:replace="~{layout :: navbar}"></nav>
+<div class="section">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem">
+        <h1 class="section-title">MANAGE <span>PRODUCTS</span></h1>
+        <a href="/admin/products/new" class="btn-primary">➕ Add Product</a>
+    </div>
+    <div th:if="${param.saved}" class="alert alert-success">Product saved successfully!</div>
+    <div th:if="${param.deleted}" class="alert alert-success">Product removed.</div>
+
+    <div class="orders-table-wrapper">
+        <table class="orders-table">
+            <thead>
+                <tr><th>Emoji</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Rating</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                <tr th:each="product : ${products}">
+                    <td th:text="${product.emoji}" style="font-size:1.5rem"></td>
+                    <td th:text="${product.name}"></td>
+                    <td th:text="${product.category.name}"></td>
+                    <td th:text="'$' + ${product.price}"></td>
+                    <td th:text="${product.stock}"></td>
+                    <td th:text="${product.rating} + '★'"></td>
+                    <td style="display:flex;gap:0.5rem">
+                        <a th:href="@{/admin/products/edit/{id}(id=${product.id})}" class="btn-outline-sm">Edit</a>
+                        <form th:action="@{/admin/products/delete/{id}(id=${product.id})}" method="post">
+                            <button type="submit" class="btn-outline-sm" style="color:#ff4444;border-color:#ff4444"
+                                    onclick="return confirm('Delete this product?')">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

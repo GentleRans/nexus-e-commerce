@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Admin Dashboard')}"></head>
+<body>
+<nav th:replace="~{layout :: navbar}"></nav>
+
+<div class="section">
+    <h1 class="section-title" style="margin-bottom:2rem">ADMIN <span>DASHBOARD</span></h1>
+
+    <div class="admin-stats">
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon">📦</div>
+            <div class="admin-stat-num" th:text="${productCount}">0</div>
+            <div class="admin-stat-label">Products</div>
+        </div>
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon">🛒</div>
+            <div class="admin-stat-num" th:text="${orderCount}">0</div>
+            <div class="admin-stat-label">Orders</div>
+        </div>
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon">👥</div>
+            <div class="admin-stat-num" th:text="${userCount}">0</div>
+            <div class="admin-stat-label">Users</div>
+        </div>
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon">💰</div>
+            <div class="admin-stat-num" th:text="'$' + ${#numbers.formatDecimal(revenue, 1, 'COMMA', 2, 'POINT')}">$0</div>
+            <div class="admin-stat-label">Revenue</div>
+        </div>
+    </div>
+
+    <div class="admin-links" style="margin:2rem 0;display:flex;gap:1rem;flex-wrap:wrap">
+        <a href="/admin/products" class="btn-primary">📦 Manage Products</a>
+        <a href="/admin/products/new" class="btn-outline">➕ Add Product</a>
+        <a href="/admin/orders" class="btn-outline">🛒 Manage Orders</a>
+        <a href="/admin/users" class="btn-outline">👥 View Users</a>
+        <a href="/shop" class="btn-outline">🏪 View Shop</a>
+    </div>
+
+    <h3 style="margin-bottom:1rem">Recent Orders</h3>
+    <div class="orders-table-wrapper">
+        <table class="orders-table">
+            <thead>
+                <tr><th>Order #</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+                <tr th:each="order : ${recentOrders}">
+                    <td th:text="${order.orderNumber}"></td>
+                    <td th:text="${order.user.fullName}"></td>
+                    <td th:text="'$' + ${order.totalAmount}"></td>
+                    <td><span class="status-badge" th:classappend="${order.status}" th:text="${order.status}"></span></td>
+                    <td th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy')}"></td>
+                    <td>
+                        <form th:action="@{/admin/orders/{id}/status(id=${order.id})}" method="post" style="display:flex;gap:0.5rem">
+                            <select name="status" class="sort-select" style="font-size:0.75rem;padding:0.3rem">
+                                <option th:each="s : ${ {'PENDING','CONFIRMED','SHIPPED','DELIVERED','CANCELLED'} }"
+                                        th:value="${s}" th:text="${s}"
+                                        th:selected="${s == order.status.name()}">Status</option>
+                            </select>
+                            <button type="submit" class="btn-primary" style="padding:0.3rem 0.7rem;font-size:0.75rem">Update</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

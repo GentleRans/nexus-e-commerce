@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Login')}"></head>
+<body class="auth-page">
+
+<div class="auth-container">
+    <a href="/" class="logo" style="display:block;text-align:center;margin-bottom:2rem">NEXUS</a>
+    <div class="auth-card">
+        <h2>Welcome Back</h2>
+        <p class="auth-sub">Sign in to your account</p>
+
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+        <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+        <div th:if="${param.registered}" class="alert alert-success">Account created! Please log in.</div>
+
+        <form th:action="@{/login}" method="post" class="auth-form">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="username" class="form-input" required placeholder="you@email.com">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" class="form-input" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn-primary" style="width:100%;padding:1rem">Sign In</button>
+        </form>
+
+        <div class="auth-divider">
+            <span>Demo Accounts</span>
+        </div>
+        <div class="demo-creds">
+            <div>👤 <strong>Customer:</strong> john@example.com / user123</div>
+            <div>⚙️ <strong>Admin:</strong> admin@nexus.com / admin123</div>
+        </div>
+
+        <p class="auth-link">Don't have an account? <a href="/register">Register</a></p>
+    </div>
+</div>
+
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

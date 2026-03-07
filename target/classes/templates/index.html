@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{layout :: head('Home')}"></head>
+<body>
+
+<div class="banner-strip">🚚 Free shipping on orders over $50 &nbsp;|&nbsp; 30-Day returns &nbsp;|&nbsp; 24/7 Support</div>
+<nav th:replace="~{layout :: navbar}"></nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+        <span class="hero-tag">2025 Collection — Now Live</span>
+        <h1>SHOP <span>BOLD.</span><br>LIVE LOUD.</h1>
+        <p>Discover premium products across 8 curated categories. Quality you can feel, prices you'll love.</p>
+        <div class="hero-cta">
+            <a href="/shop" class="btn-primary">Explore Collection →</a>
+            <a th:href="@{/shop(tag=sale)}" class="btn-outline">View Deals</a>
+        </div>
+    </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+    <div class="stat-item"><span class="stat-num">180+</span><span class="stat-label">Products</span></div>
+    <div class="stat-item"><span class="stat-num">8</span><span class="stat-label">Categories</span></div>
+    <div class="stat-item"><span class="stat-num">50K+</span><span class="stat-label">Customers</span></div>
+    <div class="stat-item"><span class="stat-num">4.9★</span><span class="stat-label">Rating</span></div>
+</div>
+
+<!-- CATEGORIES -->
+<section class="section">
+    <div class="section-header">
+        <h2 class="section-title">SHOP BY <span>CATEGORY</span></h2>
+        <a href="/shop" class="see-all">View All →</a>
+    </div>
+    <div class="categories-grid">
+        <a th:each="cat : ${categories}"
+           th:href="@{/shop(category=${cat.slug})}"
+           class="category-card">
+            <span class="cat-icon" th:text="${cat.icon}">🛍️</span>
+            <div class="cat-name" th:text="${cat.name}">Category</div>
+            <div class="cat-count" th:text="${#lists.size(cat.products != null ? cat.products : #lists.emptyList())} + ' items'">items</div>
+        </a>
+    </div>
+</section>
+
+<!-- FEATURED PRODUCTS -->
+<section class="section" style="background:var(--surface); padding: 4rem 0;">
+    <div style="max-width:1400px;margin:0 auto;padding:0 2rem">
+        <div class="section-header">
+            <h2 class="section-title">TOP <span>RATED</span></h2>
+            <a href="/shop?sort=rating" class="see-all">See All →</a>
+        </div>
+        <div class="products-grid">
+            <div th:each="product : ${featuredProducts}" class="product-card">
+                <div class="product-img">
+                    <span th:if="${product.badge}" class="product-badge" th:text="${product.badge}">Badge</span>
+                    <span class="product-emoji" th:text="${product.emoji}">📦</span>
+                </div>
+                <div class="product-info">
+                    <div class="product-cat" th:text="${product.category.name}">Category</div>
+                    <div class="product-name" th:text="${product.name}">Product Name</div>
+                    <div class="product-rating">
+                        <span class="stars">★★★★★</span>
+                        <span class="rating-count" th:text="${product.rating} + ' (' + ${#numbers.formatInteger(product.reviewCount,1,'COMMA')} + ')'"></span>
+                    </div>
+                    <div class="product-footer">
+                        <div>
+                            <span class="product-price" th:text="'$' + ${product.price}">$0</span>
+                            <span th:if="${product.oldPrice}" class="product-old-price" th:text="'$' + ${product.oldPrice}"></span>
+                        </div>
+                        <form th:action="@{/cart/add}" method="post" style="display:inline">
+                            <input type="hidden" name="productId" th:value="${product.id}">
+                            <input type="hidden" name="redirect" value="/">
+                            <button type="submit" class="add-to-cart">Add +</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- NEW ARRIVALS -->
+<section class="section">
+    <div class="section-header">
+        <h2 class="section-title">NEW <span>ARRIVALS</span></h2>
+        <a th:href="@{/shop(tag=new)}" class="see-all">See All →</a>
+    </div>
+    <div class="products-grid">
+        <div th:each="product : ${newProducts}" class="product-card">
+            <div class="product-img">
+                <span class="product-badge" style="background:var(--accent);color:#000">New</span>
+                <span class="product-emoji" th:text="${product.emoji}">📦</span>
+            </div>
+            <div class="product-info">
+                <div class="product-cat" th:text="${product.category.name}">Category</div>
+                <div class="product-name" th:text="${product.name}">Product Name</div>
+                <div class="product-rating">
+                    <span class="stars">★★★★★</span>
+                    <span class="rating-count" th:text="${product.rating} + ' (' + ${#numbers.formatInteger(product.reviewCount,1,'COMMA')} + ')'"></span>
+                </div>
+                <div class="product-footer">
+                    <div>
+                        <span class="product-price" th:text="'$' + ${product.price}">$0</span>
+                    </div>
+                    <form th:action="@{/cart/add}" method="post" style="display:inline">
+                        <input type="hidden" name="productId" th:value="${product.id}">
+                        <input type="hidden" name="redirect" value="/">
+                        <button type="submit" class="add-to-cart">Add +</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer th:replace="~{layout :: footer}"></footer>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

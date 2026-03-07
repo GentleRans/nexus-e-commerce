@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head(${product.name})}"></head>
+<body>
+<div class="banner-strip">🚚 Free shipping on orders over $50</div>
+<nav th:replace="~{layout :: navbar}"></nav>
+
+<div class="section">
+    <div class="breadcrumb">
+        <a href="/">Home</a> &rsaquo;
+        <a href="/shop">Shop</a> &rsaquo;
+        <a th:href="@{/shop(category=${product.category.slug})}" th:text="${product.category.name}">Category</a> &rsaquo;
+        <span th:text="${product.name}">Product</span>
+    </div>
+
+    <div class="product-detail-grid">
+        <!-- Image -->
+        <div class="product-detail-img">
+            <span th:text="${product.emoji}" style="font-size:9rem">📦</span>
+            <span th:if="${product.badge}" class="product-badge" th:text="${product.badge}">Badge</span>
+        </div>
+
+        <!-- Info -->
+        <div class="product-detail-info">
+            <div class="product-cat" th:text="${product.category.name}">Category</div>
+            <h1 class="product-detail-name" th:text="${product.name}">Product Name</h1>
+
+            <div class="product-rating" style="margin:1rem 0">
+                <span class="stars" style="font-size:1.1rem">★★★★★</span>
+                <span class="rating-count" th:text="${product.rating} + '/5 — ' + ${#numbers.formatInteger(product.reviewCount,1,'COMMA')} + ' reviews'"></span>
+            </div>
+
+            <div style="margin:1rem 0">
+                <span class="product-price" style="font-size:2.5rem" th:text="'$' + ${product.price}">$0</span>
+                <span th:if="${product.oldPrice}" class="product-old-price" style="font-size:1.1rem" th:text="'$' + ${product.oldPrice}"></span>
+                <span th:if="${product.discountPercent != null}" class="product-badge"
+                      th:text="'-' + ${product.discountPercent} + '%'" style="position:relative;top:0;left:0;margin-left:0.5rem"></span>
+            </div>
+
+            <p class="product-description" th:text="${product.description}">Description</p>
+
+            <div class="stock-info" th:if="${product.stock > 0}">
+                ✅ <span th:text="${product.stock} + ' in stock'">In stock</span>
+            </div>
+            <div class="stock-info out" th:unless="${product.stock > 0}">❌ Out of stock</div>
+
+            <form th:action="@{/cart/add}" method="post" class="add-to-cart-form">
+                <input type="hidden" name="productId" th:value="${product.id}">
+                <input type="hidden" name="redirect" th:value="@{/product/{id}(id=${product.id})}">
+                <div class="qty-row">
+                    <label>Qty:</label>
+                    <input type="number" name="quantity" value="1" min="1"
+                           th:max="${product.stock}" class="qty-input">
+                </div>
+                <button type="submit" class="btn-primary" style="width:100%;padding:1.1rem;font-size:1rem">
+                    🛒 Add to Cart
+                </button>
+            </form>
+
+            <div class="product-meta">
+                <div><strong>Category:</strong> <span th:text="${product.category.name}"></span></div>
+                <div><strong>SKU:</strong> <span th:text="'NXS-' + ${product.id}"></span></div>
+                <div><strong>Stock:</strong> <span th:text="${product.stock} + ' units'"></span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Products -->
+    <div th:if="${!#lists.isEmpty(related)}" style="margin-top:4rem">
+        <div class="section-header">
+            <h2 class="section-title">RELATED <span>PRODUCTS</span></h2>
+        </div>
+        <div class="products-grid">
+            <div th:each="p : ${related}" class="product-card">
+                <a th:href="@{/product/{id}(id=${p.id})}">
+                    <div class="product-img">
+                        <span th:if="${p.badge}" class="product-badge" th:text="${p.badge}">Badge</span>
+                        <span class="product-emoji" th:text="${p.emoji}">📦</span>
+                    </div>
+                </a>
+                <div class="product-info">
+                    <div class="product-name" th:text="${p.name}">Name</div>
+                    <div class="product-footer">
+                        <span class="product-price" th:text="'$' + ${p.price}">$0</span>
+                        <form th:action="@{/cart/add}" method="post">
+                            <input type="hidden" name="productId" th:value="${p.id}">
+                            <input type="hidden" name="redirect" th:value="@{/product/{id}(id=${product.id})}">
+                            <button type="submit" class="add-to-cart">Add +</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{layout :: footer}"></footer>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

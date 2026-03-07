@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' — NEXUS'">NEXUS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<!-- NAV FRAGMENT -->
+<nav th:fragment="navbar" class="navbar">
+    <div class="nav-inner">
+        <a href="/" class="logo">NEXUS</a>
+
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/shop">Shop</a></li>
+            <li class="dropdown">
+                <a href="#">Categories ▾</a>
+                <ul class="dropdown-menu">
+                    <li th:each="cat : ${categories}">
+                        <a th:href="@{/shop(category=${cat.slug})}"
+                           th:text="${cat.icon} + ' ' + ${cat.name}">Category</a>
+                    </li>
+                </ul>
+            </li>
+            <li sec:authorize="hasRole('ADMIN')"><a href="/admin" style="color:var(--accent)">⚙ Admin</a></li>
+        </ul>
+
+        <div class="nav-right">
+            <form action="/shop" method="get" class="search-form">
+                <input type="text" name="q" placeholder="Search products..." class="search-input"
+                       th:value="${searchQuery}">
+                <button type="submit" class="search-btn">🔍</button>
+            </form>
+
+            <a href="/cart" class="cart-link">
+                🛒 Cart
+                <span class="cart-badge" th:text="${cartCount ?: 0}">0</span>
+            </a>
+
+            <div sec:authorize="isAuthenticated()" class="user-menu">
+                <span sec:authentication="name" class="user-name"></span>
+                <div class="user-dropdown">
+                    <a href="/orders">My Orders</a>
+                    <a href="/logout">Logout</a>
+                </div>
+            </div>
+            <div sec:authorize="isAnonymous()" class="auth-links">
+                <a href="/login" class="btn-outline-sm">Login</a>
+                <a href="/register" class="btn-primary-sm">Register</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- FOOTER FRAGMENT -->
+<footer th:fragment="footer">
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <span class="logo">NEXUS</span>
+            <p>Premium products curated with care. Delivered with speed.</p>
+        </div>
+        <div class="footer-col">
+            <h4>Shop</h4>
+            <ul>
+                <li th:each="cat : ${categories}">
+                    <a th:href="@{/shop(category=${cat.slug})}" th:text="${cat.name}">Category</a>
+                </li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Account</h4>
+            <ul>
+                <li><a href="/login">Login</a></li>
+                <li><a href="/register">Register</a></li>
+                <li><a href="/orders">My Orders</a></li>
+                <li><a href="/cart">My Cart</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Info</h4>
+            <ul>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Shipping</a></li>
+                <li><a href="#">Returns</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2025 NEXUS E-Commerce. All rights reserved.</p>
+    </div>
+</footer>
+
+</body>
+</html>

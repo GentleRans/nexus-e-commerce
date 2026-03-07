@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Admin — Users')}"></head>
+<body>
+<nav th:replace="~{layout :: navbar}"></nav>
+<div class="section">
+    <h1 class="section-title" style="margin-bottom:2rem">MANAGE <span>USERS</span></h1>
+    <div class="orders-table-wrapper">
+        <table class="orders-table">
+            <thead>
+                <tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Joined</th></tr>
+            </thead>
+            <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.id}"></td>
+                    <td th:text="${user.fullName}"></td>
+                    <td th:text="${user.email}"></td>
+                    <td>
+                        <span class="status-badge" th:classappend="${user.role == 'ROLE_ADMIN'} ? 'CONFIRMED' : 'PENDING'"
+                              th:text="${user.role == 'ROLE_ADMIN'} ? 'Admin' : 'Customer'"></span>
+                    </td>
+                    <td th:text="${#temporals.format(user.createdAt, 'dd MMM yyyy')}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

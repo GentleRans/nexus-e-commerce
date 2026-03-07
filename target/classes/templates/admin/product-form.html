@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Product Form')}"></head>
+<body>
+<nav th:replace="~{layout :: navbar}"></nav>
+<div class="section" style="max-width:700px">
+    <h1 class="section-title" style="margin-bottom:2rem">
+        <span th:text="${product.id != null} ? 'EDIT' : 'ADD'">ADD</span> <span>PRODUCT</span>
+    </h1>
+
+    <form th:action="@{/admin/products/save}" method="post" th:object="${product}" class="auth-form">
+        <input type="hidden" th:field="*{id}">
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Product Name</label>
+                <input type="text" th:field="*{name}" class="form-input" required placeholder="Product name">
+            </div>
+            <div class="form-group">
+                <label>Emoji</label>
+                <input type="text" th:field="*{emoji}" class="form-input" placeholder="📦" maxlength="4">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Description</label>
+            <textarea th:field="*{description}" class="form-input" rows="3" placeholder="Product description"></textarea>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Price ($)</label>
+                <input type="number" th:field="*{price}" class="form-input" required step="0.01" min="0">
+            </div>
+            <div class="form-group">
+                <label>Old Price ($) — optional</label>
+                <input type="number" th:field="*{oldPrice}" class="form-input" step="0.01" min="0">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Stock</label>
+                <input type="number" th:field="*{stock}" class="form-input" min="0" value="100">
+            </div>
+            <div class="form-group">
+                <label>Rating (0–5)</label>
+                <input type="number" th:field="*{rating}" class="form-input" step="0.1" min="0" max="5">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Badge</label>
+                <select th:field="*{badge}" class="form-input">
+                    <option value="">None</option>
+                    <option value="New">New</option>
+                    <option value="Sale">Sale</option>
+                    <option value="Hot">Hot</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Tag</label>
+                <select th:field="*{tag}" class="form-input">
+                    <option value="">None</option>
+                    <option value="new">New Arrival</option>
+                    <option value="sale">On Sale</option>
+                    <option value="popular">Popular</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Category</label>
+            <select name="categoryId" class="form-input" required>
+                <option th:each="cat : ${categories}"
+                        th:value="${cat.id}"
+                        th:text="${cat.name}"
+                        th:selected="${product.category != null && product.category.id == cat.id}">Category</option>
+            </select>
+        </div>
+
+        <div style="display:flex;gap:1rem;margin-top:1rem">
+            <button type="submit" class="btn-primary" style="flex:1;padding:1rem">
+                <span th:text="${product.id != null} ? 'Update Product' : 'Add Product'">Save</span>
+            </button>
+            <a href="/admin/products" class="btn-outline" style="flex:1;padding:1rem;text-align:center">Cancel</a>
+        </div>
+    </form>
+</div>
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

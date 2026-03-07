@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Shop')}"></head>
+<body>
+<div class="banner-strip">🚚 Free shipping on orders over $50 &nbsp;|&nbsp; 30-Day returns</div>
+<nav th:replace="~{layout :: navbar}"></nav>
+
+<div class="page-header">
+    <div class="page-header-inner">
+        <h1 class="page-title" th:text="${pageTitle}">Shop</h1>
+        <p class="products-count" th:text="${#lists.size(products)} + ' products found'"></p>
+    </div>
+</div>
+
+<div class="shop-layout section">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-block">
+            <h3>Categories</h3>
+            <ul class="sidebar-list">
+                <li><a href="/shop" th:classappend="${selectedCategory == null} ? 'active' : ''">All Products</a></li>
+                <li th:each="cat : ${categories}">
+                    <a th:href="@{/shop(category=${cat.slug})}"
+                       th:text="${cat.icon} + ' ' + ${cat.name}"
+                       th:classappend="${selectedCategory == cat.slug} ? 'active' : ''">Category</a>
+                </li>
+            </ul>
+        </div>
+        <div class="sidebar-block">
+            <h3>Filter By</h3>
+            <ul class="sidebar-list">
+                <li><a th:href="@{/shop(tag=popular)}">🔥 Popular</a></li>
+                <li><a th:href="@{/shop(tag=new)}">✨ New Arrivals</a></li>
+                <li><a th:href="@{/shop(tag=sale)}">💰 On Sale</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="shop-main">
+        <div class="filter-bar">
+            <a th:href="@{/shop(category=${selectedCategory})}" class="filter-btn" th:classappend="${currentSort == null} ? ' active' : ''">Default</a>
+            <a th:href="@{/shop(category=${selectedCategory}, sort='price-asc')}" class="filter-btn" th:classappend="${currentSort == 'price-asc'} ? ' active' : ''">Price ↑</a>
+            <a th:href="@{/shop(category=${selectedCategory}, sort='price-desc')}" class="filter-btn" th:classappend="${currentSort == 'price-desc'} ? ' active' : ''">Price ↓</a>
+            <a th:href="@{/shop(category=${selectedCategory}, sort='rating')}" class="filter-btn" th:classappend="${currentSort == 'rating'} ? ' active' : ''">Top Rated</a>
+        </div>
+
+        <div class="products-grid" th:if="${!#lists.isEmpty(products)}">
+            <div th:each="product : ${products}" class="product-card">
+                <a th:href="@{/product/{id}(id=${product.id})}" class="product-img-link">
+                    <div class="product-img">
+                        <span th:if="${product.badge}" class="product-badge" th:text="${product.badge}">Badge</span>
+                        <span class="product-emoji" th:text="${product.emoji}">📦</span>
+                    </div>
+                </a>
+                <div class="product-info">
+                    <div class="product-cat" th:text="${product.category.name}">Category</div>
+                    <a th:href="@{/product/{id}(id=${product.id})}">
+                        <div class="product-name" th:text="${product.name}">Product Name</div>
+                    </a>
+                    <div class="product-rating">
+                        <span class="stars">★★★★★</span>
+                        <span class="rating-count" th:text="${product.rating} + ' (' + ${#numbers.formatInteger(product.reviewCount,1,'COMMA')} + ')'"></span>
+                    </div>
+                    <div class="product-footer">
+                        <div>
+                            <span class="product-price" th:text="'$' + ${product.price}">$0</span>
+                            <span th:if="${product.oldPrice}" class="product-old-price" th:text="'$' + ${product.oldPrice}"></span>
+                        </div>
+                        <form th:action="@{/cart/add}" method="post" style="display:inline">
+                            <input type="hidden" name="productId" th:value="${product.id}">
+                            <input type="hidden" th:name="redirect" th:value="${'/shop' + (selectedCategory != null ? '?category=' + selectedCategory : '')}">
+                            <button type="submit" class="add-to-cart">Add +</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(products)}" class="empty-state">
+            <div style="font-size:4rem">🔍</div>
+            <h2>No products found</h2>
+            <p>Try a different search or browse our categories.</p>
+            <a href="/shop" class="btn-primary">Browse All</a>
+        </div>
+    </main>
+</div>
+
+<footer th:replace="~{layout :: footer}"></footer>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

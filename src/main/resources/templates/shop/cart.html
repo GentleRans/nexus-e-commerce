@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Cart')}"></head>
+<body>
+<div class="banner-strip">🚚 Free shipping on orders over $50</div>
+<nav th:replace="~{layout :: navbar}"></nav>
+
+<div class="section">
+    <h1 class="section-title" style="margin-bottom:2rem">YOUR <span>CART</span></h1>
+
+    <div th:if="${#lists.isEmpty(cartItems)}" class="empty-state">
+        <div style="font-size:5rem">🛒</div>
+        <h2>Your cart is empty</h2>
+        <p>Add some amazing products to get started.</p>
+        <a href="/shop" class="btn-primary">Start Shopping</a>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(cartItems)}" class="cart-layout">
+        <div class="cart-items-list">
+            <div th:each="item : ${cartItems}" class="cart-row">
+                <div class="cart-row-emoji" th:text="${item.emoji}">📦</div>
+                <div class="cart-row-info">
+                    <div class="cart-row-name" th:text="${item.name}">Product</div>
+                    <div class="cart-row-price" th:text="'$' + ${item.price} + ' each'"></div>
+                </div>
+                <form th:action="@{/cart/update}" method="post" class="cart-qty-form">
+                    <input type="hidden" name="productId" th:value="${item.productId}">
+                    <input type="number" name="quantity" th:value="${item.quantity}" min="0" max="99"
+                           class="qty-input" onchange="this.form.submit()">
+                </form>
+                <div class="cart-row-subtotal" th:text="'$' + ${item.subtotal}">$0</div>
+                <form th:action="@{/cart/remove}" method="post">
+                    <input type="hidden" name="productId" th:value="${item.productId}">
+                    <button type="submit" class="remove-btn" title="Remove">🗑️</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="cart-summary">
+            <h3>Order Summary</h3>
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span th:text="'$' + ${total}">$0</span>
+            </div>
+            <div class="summary-row">
+                <span>Shipping</span>
+                <span th:text="${total.doubleValue() >= 50} ? 'FREE' : '$5.99'">$0</span>
+            </div>
+            <div class="summary-row total">
+                <strong>Total</strong>
+                <strong th:text="'$' + ${total}">$0</strong>
+            </div>
+            <a href="/checkout" class="btn-primary" style="display:block;text-align:center;padding:1rem;margin-top:1rem">
+                Proceed to Checkout →
+            </a>
+            <a href="/shop" class="btn-outline" style="display:block;text-align:center;padding:0.8rem;margin-top:0.75rem">
+                Continue Shopping
+            </a>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{layout :: footer}"></footer>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

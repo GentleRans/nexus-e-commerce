@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Order Detail')}"></head>
+<body>
+<nav th:replace="~{layout :: navbar}"></nav>
+
+<div class="section">
+    <div th:if="${success}" class="alert alert-success">
+        🎉 Order placed successfully! Thank you for shopping with NEXUS.
+    </div>
+
+    <div class="breadcrumb">
+        <a href="/orders">My Orders</a> &rsaquo; <span th:text="${order.orderNumber}">Order</span>
+    </div>
+
+    <h1 class="section-title" style="margin:1rem 0 2rem">ORDER <span th:text="${order.orderNumber}">DETAIL</span></h1>
+
+    <div class="order-detail-grid">
+        <div class="order-items-col">
+            <h3>Items Ordered</h3>
+            <div th:each="item : ${order.items}" class="cart-row">
+                <div class="cart-row-emoji" th:text="${item.product.emoji}">📦</div>
+                <div class="cart-row-info">
+                    <div class="cart-row-name" th:text="${item.product.name}">Product</div>
+                    <div class="cart-row-price" th:text="'$' + ${item.unitPrice} + ' × ' + ${item.quantity}"></div>
+                </div>
+                <div class="cart-row-subtotal" th:text="'$' + ${item.subtotal}">$0</div>
+            </div>
+        </div>
+
+        <div class="order-summary-col">
+            <h3>Order Summary</h3>
+            <div class="summary-row">
+                <span>Order Number</span><span th:text="${order.orderNumber}"></span>
+            </div>
+            <div class="summary-row">
+                <span>Date</span><span th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy HH:mm')}"></span>
+            </div>
+            <div class="summary-row">
+                <span>Status</span>
+                <span class="status-badge" th:classappend="${order.status}" th:text="${order.status}">PENDING</span>
+            </div>
+            <div class="summary-row">
+                <span>Ship to</span>
+                <span th:text="${order.shippingAddress + ', ' + order.city + ', ' + order.country}"></span>
+            </div>
+            <div class="summary-row total">
+                <strong>Total</strong>
+                <strong th:text="'$' + ${order.totalAmount}">$0</strong>
+            </div>
+            <a href="/orders" class="btn-outline" style="display:block;text-align:center;margin-top:1rem;padding:0.8rem">
+                ← Back to Orders
+            </a>
+            <a href="/shop" class="btn-primary" style="display:block;text-align:center;margin-top:0.75rem;padding:0.8rem">
+                Continue Shopping
+            </a>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>
