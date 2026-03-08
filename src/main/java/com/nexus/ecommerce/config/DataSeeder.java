@@ -23,7 +23,11 @@ public class DataSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (userRepo.count() > 0) return; // already seeded
+        try {
+    if (userRepo.count() > 0) return;
+} catch (Exception e) {
+    return;
+} // already seeded
 
         // ---- ADMIN USER ----
         User admin = new User("Admin", "NEXUS", "admin@nexus.com", encoder.encode("admin123"), "ROLE_ADMIN");
